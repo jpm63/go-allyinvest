@@ -71,7 +71,7 @@ type OptionQuote struct {
 	Delta                      float64   `json:"idelta,string"`
 	Gamma                      float64   `json:"igamma,string"`
 	ImpliedVolatility          float64   `json:"imp_Volatility,string"`
-	LastTradeVolume            int       `json:"incr_vl,string"`
+	LastTradeVolume            string    `json:"incr_vl"`
 	Rho                        float64   `json:"irho,string"`
 	Description                string    `json:"issue_desc"`
 	Theta                      float64   `json:"itheta,string"`

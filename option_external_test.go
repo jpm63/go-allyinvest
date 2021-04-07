@@ -228,11 +228,18 @@ func TestGetSchema(t *testing.T) {
 
 	api := allyinvest.New(k)
 
-	out, _ := api.GetOptionsExpirations(allyinvest.GetOptionsExpirationsInput{
+	out, err := api.SearchOptions(allyinvest.SearchOptionsInput{
 		Symbol: allyinvest.String("SPY"),
+		Query: &allyinvest.OptionSearchQuery{
+			{
+				ExpirationDate: allyinvest.Int(20210409),
+				QueryOperator:  allyinvest.QueryOperatorEqual,
+			},
+		},
 	})
 
 	o, _ := json.MarshalIndent(out, "", "  ")
 	fmt.Printf("%s\n", o)
+	fmt.Println(err)
 }
 */
