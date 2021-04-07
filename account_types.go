@@ -216,7 +216,7 @@ type GetAccountsBalancesResponse struct {
 	ID             string                `json:"@id"`
 	AccountBalance AccountBalanceSummary `json:"accountbalance"`
 	TotalBalance   TotalBalance          `json:"totalbalance"`
-	ElapsedTIme    int                   `json:"elapsedtime,string"`
+	ElapsedTime    int                   `json:"elapsedtime,string"`
 	Error          string                `json:"error"`
 }
 
@@ -237,7 +237,7 @@ type GetAccountsOutput struct {
 type GetAccountsResponse struct {
 	ID          string   `json:"@id"`
 	Accounts    Accounts `json:"accounts"`
-	ElapsedTIme int      `json:"elapsedtime,string"`
+	ElapsedTime int      `json:"elapsedtime,string"`
 	Error       string   `json:"error"`
 }
 

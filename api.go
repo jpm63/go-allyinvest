@@ -33,8 +33,8 @@ type API interface {
 	GetQuotes()
 
 	SearchOptions(SearchOptionsInput) (SearchOptionsOutput, error)
-	GetOptionsStrikes()
-	GetOptionsExpirations()
+	GetOptionsStrikes(GetOptionsStrikesInput) (GetOptionsStrikesOutput, error)
+	GetOptionsExpirations(GetOptionsExpirationsInput) (GetOptionsExpirationsOutput, error)
 
 	GetMemberProfile()
 
