@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-	"time"
 )
 
 // SearchOptionsInput are the required or optional parameters
@@ -55,12 +54,12 @@ func (o OptionSearchQueryElement) Encode() string {
 	switch {
 	case o.StrikePrice != nil:
 		return fmt.Sprintf("strikeprice%s%.2f", o.QueryOperator, *o.StrikePrice)
-	case o.ExpirationDate != (time.Time{}):
-		return fmt.Sprintf("xdate%s%s", o.QueryOperator, o.ExpirationDate.Format("20060102"))
-	case o.ExpirationMonth != (time.Time{}):
-		return fmt.Sprintf("xmonth%s%s", o.QueryOperator, o.ExpirationMonth.Format("01"))
-	case o.ExpirationYear != (time.Time{}):
-		return fmt.Sprintf("xyear%s%s", o.QueryOperator, o.ExpirationYear.Format("2006"))
+	case o.ExpirationDate != nil:
+		return fmt.Sprintf("xdate%s%d", o.QueryOperator, *o.ExpirationDate)
+	case o.ExpirationMonth != nil:
+		return fmt.Sprintf("xmonth%s%02d", o.QueryOperator, *o.ExpirationMonth)
+	case o.ExpirationYear != nil:
+		return fmt.Sprintf("xyear%s%d", o.QueryOperator, *o.ExpirationYear)
 	case o.OptionKind != nil:
 		return fmt.Sprintf("put_call%s%s", o.QueryOperator, *o.OptionKind)
 	case o.Unique != nil:
@@ -70,7 +69,7 @@ func (o OptionSearchQueryElement) Encode() string {
 	}
 }
 
-// SearchOptions searches for the provided symbol
+// SearchOptions searches for the provided symbol.
 func (a *api) SearchOptions(input SearchOptionsInput) (SearchOptionsOutput, error) {
 	output := SearchOptionsOutput{}
 	err := validate(input)
@@ -79,6 +78,66 @@ func (a *api) SearchOptions(input SearchOptionsInput) (SearchOptionsOutput, erro
 	}
 
 	route := "/market/options/search"
+	err = a.httpGet(route, input, &output)
+	return output, err
+}
+
+// GetOptionsStrikesInput are the required or optional parameters
+// to GetOptionsStrikes.
+type GetOptionsStrikesInput struct {
+	// REQUIRED: The symbol you are searching for.
+	Symbol *string `validate:"required"`
+}
+
+// Encode encodes g to a query string.
+func (g GetOptionsStrikesInput) Encode() string {
+	u := url.Values{}
+	if g.Symbol != nil {
+		u.Add("symbol", string(*g.Symbol))
+	}
+
+	return u.Encode()
+}
+
+// GetOptionsStrikes lists the available strikes for the given symbol.
+func (a *api) GetOptionsStrikes(input GetOptionsStrikesInput) (GetOptionsStrikesOutput, error) {
+	output := GetOptionsStrikesOutput{}
+	err := validate(input)
+	if err != nil {
+		return output, err
+	}
+
+	route := "/market/options/strikes"
+	err = a.httpGet(route, input, &output)
+	return output, err
+}
+
+// GetOptionsExpirationsInput are the required or optional parameters
+// to GetOptiosnExpirations.
+type GetOptionsExpirationsInput struct {
+	// REQUIRED: The symbol you are searching for.
+	Symbol *string `validate:"required"`
+}
+
+// Encode encodes g to a query string.
+func (g GetOptionsExpirationsInput) Encode() string {
+	u := url.Values{}
+	if g.Symbol != nil {
+		u.Add("symbol", string(*g.Symbol))
+	}
+
+	return u.Encode()
+}
+
+// GetOptionsStrikes lists the available strikes for the given symbol.
+func (a *api) GetOptionsExpirations(input GetOptionsExpirationsInput) (GetOptionsExpirationsOutput, error) {
+	output := GetOptionsExpirationsOutput{}
+	err := validate(input)
+	if err != nil {
+		return output, err
+	}
+
+	route := "/market/options/expirations"
 	err = a.httpGet(route, input, &output)
 	return output, err
 }

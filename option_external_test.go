@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"net/url"
 	"testing"
-	"time"
 
 	"github.com/jpm63/go-allyinvest"
 )
@@ -66,8 +65,6 @@ func TestOptionSearchQueryEncode(t *testing.T) {
 }
 
 func TestOptionSearchQueryElementEncode(t *testing.T) {
-	d, _ := time.Parse("2006-Jan-02", "2010-Jul-01")
-	fmt.Println(d)
 	tests := []struct {
 		element allyinvest.OptionSearchQueryElement
 		want    string
@@ -81,21 +78,21 @@ func TestOptionSearchQueryElementEncode(t *testing.T) {
 		},
 		{
 			element: allyinvest.OptionSearchQueryElement{
-				ExpirationDate: d,
+				ExpirationDate: allyinvest.Int(20100701),
 				QueryOperator:  allyinvest.QueryOperatorGreaterThan,
 			},
 			want: "xdate-gt:20100701",
 		},
 		{
 			element: allyinvest.OptionSearchQueryElement{
-				ExpirationMonth: d,
+				ExpirationMonth: allyinvest.Int(07),
 				QueryOperator:   allyinvest.QueryOperatorGreaterThanOrEqual,
 			},
 			want: "xmonth-gte:07",
 		},
 		{
 			element: allyinvest.OptionSearchQueryElement{
-				ExpirationYear: d,
+				ExpirationYear: allyinvest.Int(2010),
 				QueryOperator:  allyinvest.QueryOperatorLessThan,
 			},
 			want: "xyear-lt:2010",
@@ -155,3 +152,87 @@ func TestSearchOptions(t *testing.T) {
 		}
 	})
 }
+
+func TestGetOptionsStrikesInputEncode(t *testing.T) {
+	g := allyinvest.GetOptionsStrikesInput{
+		Symbol: allyinvest.String("SYMBOL"),
+	}
+
+	want := "symbol=SYMBOL"
+	got := g.Encode()
+	if got != want {
+		t.Errorf("got %s, want %s", got, want)
+	}
+}
+
+func TestGetOptionsStrikes(t *testing.T) {
+	t.Run("InvalidInput", func(t *testing.T) {
+		a := allyinvest.NewWithClient(http.DefaultClient)
+		_, err := a.GetOptionsStrikes(allyinvest.GetOptionsStrikesInput{})
+		if err == nil {
+			t.Errorf("got nil, want err")
+		}
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		a := allyinvest.NewWithClient(mockHTTPClient{
+			DoValue: &http.Response{
+				Body: io.NopCloser(bytes.NewReader([]byte{})),
+			},
+		})
+
+		_, err := a.GetOptionsStrikes(allyinvest.GetOptionsStrikesInput{
+			Symbol: allyinvest.String("s"),
+		})
+
+		if err == nil {
+			t.Errorf("got nil, want err")
+		}
+	})
+}
+
+func TestGetOptionsExpirations(t *testing.T) {
+	t.Run("InvalidInput", func(t *testing.T) {
+		a := allyinvest.NewWithClient(http.DefaultClient)
+		_, err := a.GetOptionsExpirations(allyinvest.GetOptionsExpirationsInput{})
+		if err == nil {
+			t.Errorf("got nil, want err")
+		}
+	})
+
+	t.Run("Success", func(t *testing.T) {
+		a := allyinvest.NewWithClient(mockHTTPClient{
+			DoValue: &http.Response{
+				Body: io.NopCloser(bytes.NewReader([]byte{})),
+			},
+		})
+
+		_, err := a.GetOptionsExpirations(allyinvest.GetOptionsExpirationsInput{
+			Symbol: allyinvest.String("s"),
+		})
+
+		if err == nil {
+			t.Errorf("got nil, want err")
+		}
+	})
+}
+
+/*
+func TestGetSchema(t *testing.T) {
+	k := allyinvest.ApplicationKeys{
+		ConsumerKey:    os.Getenv("CONSUMER_KEY"),
+		ConsumerSecret: os.Getenv("CONSUMER_SECRET"),
+		AccessToken:    os.Getenv("ACCESS_TOKEN"),
+		AccessSecret:   os.Getenv("ACCESS_SECRET"),
+	}
+
+	api := allyinvest.New(k)
+
+	out, _ := api.GetOptionsExpirations(allyinvest.GetOptionsExpirationsInput{
+		Symbol: allyinvest.String("SPY"),
+	})
+
+	o, _ := json.MarshalIndent(out, "", "  ")
+	fmt.Printf("%s\n", o)
+}
+*/

@@ -6,9 +6,9 @@ type OptionSearchQuery []OptionSearchQueryElement
 
 type OptionSearchQueryElement struct {
 	StrikePrice     *float64
-	ExpirationDate  time.Time
-	ExpirationMonth time.Time
-	ExpirationYear  time.Time
+	ExpirationDate  *int
+	ExpirationMonth *int
+	ExpirationYear  *int
 	OptionKind      *string
 	Unique          *string
 	QueryOperator   QueryOperator
@@ -41,7 +41,7 @@ type SearchOptionsOutput struct {
 type SearchOptionsResponse struct {
 	ID          string        `json:"@id"`
 	Quotes      OptionsQuotes `json:"quotes"`
-	ElapsedTIme int           `json:"elapsedtime,string"`
+	ElapsedTime int           `json:"elapsedtime,string"`
 	Error       string        `json:"error"`
 }
 
@@ -151,3 +151,33 @@ const (
 	SessionOpenMarket = "open"
 	SessionPostMarket = "post"
 )
+
+type GetOptionsStrikesOutput struct {
+	Response GetOptionsStrikesResponse `json:"response"`
+}
+
+type GetOptionsStrikesResponse struct {
+	ID          string              `json:"@id"`
+	Prices      OptionsStrikePrices `json:"prices"`
+	ElapsedTime int                 `json:"elapsedtime,string"`
+	Error       string              `json:"error"`
+}
+
+type OptionsStrikePrices struct {
+	Price []string `json:"price"`
+}
+
+type GetOptionsExpirationsOutput struct {
+	Response GetOptionsExpirationsResponse `json:"response"`
+}
+
+type GetOptionsExpirationsResponse struct {
+	ID          string                   `json:"@id"`
+	Expirations OptionsStrikeExpirations `json:"expirationdates"`
+	ElapsedTime int                      `json:"elapsedtime,string"`
+	Error       string                   `json:"error"`
+}
+
+type OptionsStrikeExpirations struct {
+	Date []string `json:"date"`
+}

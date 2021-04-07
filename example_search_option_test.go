@@ -2,7 +2,6 @@ package allyinvest_test
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/jpm63/go-allyinvest"
 )
@@ -22,7 +21,7 @@ func Example_aPIGetOptions() {
 		Symbol: allyinvest.String("SPY"),
 		Query: &allyinvest.OptionSearchQuery{
 			{
-				ExpirationDate: time.Date(2021, time.April, 1, 0, 0, 0, 0, &time.Location{}),
+				ExpirationDate: allyinvest.Int(20210409),
 				QueryOperator:  allyinvest.QueryOperatorEqual,
 			},
 			{
